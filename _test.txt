@@ -1,0 +1,101 @@
+Test /api2 : created by making routes and doing work directly.
+Test homepage:
+
+
+    >>> from server import app
+    >>> client = app.test_client()
+
+    >>> from model import db, example_data, Employee, Department
+    >>> from flask import jsonify
+    >>> import os
+
+Set up test database:
+
+    >>> app.config['TESTING'] = True
+    >>> dropped = os.system("dropdb testdb")
+    >>> dropped == 0 or dropped == 256
+    True
+    >>> os.system("createdb testdb")
+    0
+
+    >>> app.config['SQLALCHEMY_ECHO'] = False
+    >>> app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///testdb'
+    >>> app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    >>> db.app = app
+    >>> db.init_app(app)
+
+Create tables and check that user table data loads.
+    >>> db.create_all()
+    >>> example_data()
+
+Test employee route:
+    >>> r = client.get("/api2/employee")
+    >>> assert "employees" in str(r.data)
+    >>> assert "Maggie" in str(r.data)
+
+
+Test route to add an employee:
+
+    >>> r = client.post("/api2/employee", data={"name":"Balloonicorn", "state":"CA", "dept_code":"mktg"})
+    >>> assert r.status_code == 201
+
+
+Test employee detail route:
+
+    >>> r = client.get("/api2/employee/3")
+    >>> assert "Maggie" in str(r.data)
+
+Test route to update an existing employee:
+    >>> r = client.put("/api2/employee/3", data={"name":"Margaret"})
+    >>> assert r.status_code == 200
+    >>> assert "3" in str(r.data)
+
+Test route to delete an employee:
+    >>> r = client.delete("/api2/employee/3")
+    >>> assert r.status_code == 200
+
+
+Test /api : created using Flask-restless
+
+Set up Flask-restless api:
+
+    >>> from flask_restless import APIManager
+    >>> manager = APIManager(app, flask_sqlalchemy_db=db)
+
+Create API endpoints, which will be available at /api/<tablename> by
+default. Allowed HTTP methods can be specified as well.
+
+    >>> manager.create_api(Department, methods=['GET', 'POST', 'DELETE', 'PUT', 'PATCH'])
+
+    >>> manager.create_api(Employee, methods=['GET', 'POST', 'DELETE', 'PUT', 'PATCH'])
+
+Test department route:
+
+    >>> r = client.get("/api/department")
+    >>> assert "Finance" in str(r.data)
+
+Test employee route:
+    >>> r = client.get("/api/employee")
+    >>> assert "Leonard" in str(r.data)
+
+
+Test route to add an employee:
+    >>> import json
+    >>> r = client.post("/api/employee", data=json.dumps({"name":"Rainbowicorn", "state":"CA", "dept_code":"mktg"}), headers={"Content-Type": "application/json"})
+    >>> assert b"Rainbowicorn" in r.data
+    >>> assert r.status_code == 201
+
+
+Test employee detail route:
+    >>> r = client.get("/api/employee/1")
+    >>> assert "Leonard" in str(r.data)
+
+Test route to update an existing employee:
+    >>> r = client.put("/api/employee/1", data=json.dumps({"name":"Leonard"}), headers={"Content-Type": "application/json"})
+    >>> assert b"Leonard" in r.data
+    >>> assert r.status_code == 200
+
+Test route to delete an employee:
+    >>> r = client.delete("/api/employee/1")
+    >>> assert r.status_code == 204
+

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    
+    {% for employee in employees %}
+        <li>
+            <a href="/api2/employee/{{ employee.id}}">{{ employee.name }}</a>, {{ employee.dept_code }}
+        </li>
+    {% endfor %}
+
+{% endblock %}
