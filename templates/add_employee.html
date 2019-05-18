@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form action="/add_employee" method="POST">
+      <div class="form-row">
+        <div class="col-7">
+          <input type="text" class="form-control" placeholder="Name" name="name">
+        </div>
+        <div class="col">
+          <input type="text" class="form-control" placeholder="State" name="state">
+        </div>
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Department Code" name="dept_code">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+{% endblock %}

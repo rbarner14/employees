@@ -52,21 +52,52 @@ def employee_list():
     return render_template("employee_list.html",employees=all_employees)
 
 
-@app.route('/api2/employee', methods=['POST'])
-def employee_add():
-    """Add an employee."""
+# @app.route('/api2/employee', methods=['POST'])
+# def employee_add():
+#     """Add an employee."""
 
-    # Values from request, as opposed to request.args.get whose details come
-    # from a form
-    e = Employee(name=request.values.get('name'),
-                 state=request.values.get('state'),
-                 dept_code=request.values.get('dept_code'),
-                 )
+#     # Values from request, as opposed to request.args.get whose details come
+#     # from a form
+#     e = Employee(name=request.values.get('name'),
+#                  state=request.values.get('state'),
+#                  dept_code=request.values.get('dept_code'),
+#                  )
+#     db.session.add(e)
+#     db.session.commit()
+
+#     # Return HTTP status code 201, with body being new ID
+#     return str(e.id), 201
+
+@app.route("/add_employee", methods=["GET"])
+def employee_add():
+    """Show employee registration form."""
+
+    return render_template("add_employee.html")
+
+
+@app.route("/add_employee", methods=["POST"])
+def employee_add_process():
+    """Add new user to database."""
+
+    e = Employee(name=request.form['name'],
+                 state=request.form['state'],
+                 dept_code=request.form['dept_code']
+                )
+
     db.session.add(e)
     db.session.commit()
 
-    # Return HTTP status code 201, with body being new ID
-    return str(e.id), 201
+    flash("Employee added.")
+
+    return redirect("/api2/employee")
+
+
+# @app.route('/api2/employee/<int:id>', methods=['GET'])
+# def employee_detail(id):
+#     """Get detail on one employee."""
+
+#     e = Employee.query.get_or_404(id)
+#     return jsonify(e.to_dict())
 
 
 @app.route('/api2/employee/<int:id>', methods=["GET"])
@@ -76,14 +107,6 @@ def employee_detail(id):
     e = Employee.query.get_or_404(id)
 
     return render_template("employee.html", employee=e)
-
-
-@app.route('/api2/employee/<int:id>', methods=['GET'])
-def employee_detail(id):
-    """Get detail on one employee."""
-
-    e = Employee.query.get_or_404(id)
-    return jsonify(e.to_dict())
 
 
 @app.route('/api2/employee/<int:id>', methods=['PUT', 'PATCH'])

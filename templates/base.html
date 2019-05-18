@@ -4,8 +4,14 @@
     <title>Employee Bank</title>
 </head>
 <body>
+    <a href="/">Home</a>
+    <a href="/add_employee">Add Employee</a>
 
     {% block content %}Place content here.{% endblock %}
+
+    {% for flash in get_flashed_messages() %}
+        {{ flash }}
+    {% endfor %}
 
 </body>
 </html>
