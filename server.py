@@ -18,7 +18,19 @@ from jinja2 import StrictUndefined
 from flask import Flask, jsonify, request, render_template, redirect, flash
 from flask_restless import APIManager
 from flask_debugtoolbar import DebugToolbarExtension
+
 from model import connect_to_db, Employee, Department, db
+
+import requests
+
+from findAVenue import findAVenue
+
+import os
+
+# API Keys.
+foursquare_client_id = os.environ.get('FORSQUARE_CLIENT_ID')
+foursquare_client_secret = os.environ.get('FORSQUARE_CLIENT_SECRET')
+google_api_key = os.environ.get('GOOLE_API_KEY')
 
 app = Flask(__name__)
 
@@ -33,6 +45,26 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 def index():
 
     return render_template("homepage.html")
+
+@app.route('/venue_search', methods=["GET"])
+def search_venue():
+    """Show search box."""
+
+    return render_template("venue_search.html")
+
+@app.route('/venue', methods=["GET"])
+def venue_result():
+
+    location = request.args.get('location')
+
+    venue = findAVenue(13, location)
+
+    name = venue['name']
+    address = venue['address']
+    image = venue['image']
+
+    return render_template("venue.html", name=name, address=address, image=image)
+
 
 
 # @app.route('/api2/employee', methods=['GET'])

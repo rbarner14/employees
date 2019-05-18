@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <form action="/venue" method="GET">
+    <div class="form-row">
+      <div class="col-7">
+        <input type="text" class="form-control" placeholder="City" name="location">
+      </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
+
+{% endblock %}
