@@ -13,46 +13,69 @@ Serves similar same API twice, both by hand and using Flask-restless.
 Joel Burton <joel@joelburton.com>
 """
 
+# For HTML templating.
 from jinja2 import StrictUndefined
-
+# For debugging, receiving/delivering requests, alerts, and form actions.
+# To create app.
 from flask import Flask, jsonify, request, render_template, redirect, flash
 from flask_restless import APIManager
 from flask_debugtoolbar import DebugToolbarExtension
-
+# For access to/communicating with database.
 from model import connect_to_db, Employee, Department, db
-
+# For url requests
 import requests
-
+# For API calls.
 from findAVenue import findAVenue
-
+# For secret keys.
 import os
+# For jQuery adjective component.
+import random
+# For jQuery adjective component (sleep).
+import time
 
 # API Keys.
 foursquare_client_id = os.environ.get('FORSQUARE_CLIENT_ID')
 foursquare_client_secret = os.environ.get('FORSQUARE_CLIENT_SECRET')
 google_api_key = os.environ.get('GOOLE_API_KEY')
 
+# Instantiating Flask app.
 app = Flask(__name__)
 
+# Needed for debugging.
 app.secret_key = "ABC"
-
 app.jinja_env.undefined = StrictUndefined
-
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+
+ADJECTIVES = ['fun', 'fantastic', 'kickass', 'ballerific', 'awesome', 'sweet']
 
 
 @app.route('/')
 def index():
 
-    return render_template("homepage.html")
+    adjective = random.choice(ADJECTIVES)
 
-@app.route('/venue_search', methods=["GET"])
+    return render_template('homepage.html', adjective=adjective)
+
+
+# jQuery components are their own routes.
+@app.route('/adjective')
+def get_rando_adjective():
+    """Show random adjective."""
+
+    # Simulate a slow server
+    time.sleep(2)
+
+    return random.choice(ADJECTIVES)
+
+
+@app.route('/venue_search', methods=['GET'])
 def search_venue():
     """Show search box."""
 
-    return render_template("venue_search.html")
+    return render_template('venue_search.html')
 
-@app.route('/venue', methods=["GET"])
+
+@app.route('/venue', methods=['GET'])
 def venue_result():
 
     location = request.args.get('location')
@@ -63,7 +86,7 @@ def venue_result():
     address = venue['address']
     image = venue['image']
 
-    return render_template("venue.html", name=name, address=address, image=image)
+    return render_template('venue.html', name=name, address=address, image=image)
 
 
 
@@ -81,7 +104,7 @@ def employee_list():
 
     all_employees = Employee.query.all()
    
-    return render_template("employee_list.html",employees=all_employees)
+    return render_template('employee_list.html',employees=all_employees)
 
 
 # @app.route('/api2/employee', methods=['POST'])
@@ -100,14 +123,14 @@ def employee_list():
 #     # Return HTTP status code 201, with body being new ID
 #     return str(e.id), 201
 
-@app.route("/add_employee", methods=["GET"])
+@app.route('/add_employee', methods=['GET'])
 def employee_add():
     """Show employee registration form."""
 
-    return render_template("add_employee.html")
+    return render_template('add_employee.html')
 
 
-@app.route("/add_employee", methods=["POST"])
+@app.route('/add_employee', methods=['POST'])
 def employee_add_process():
     """Add new user to database."""
 
@@ -119,9 +142,9 @@ def employee_add_process():
     db.session.add(e)
     db.session.commit()
 
-    flash("Employee added.")
+    flash('Employee added.')
 
-    return redirect("/api2/employee")
+    return redirect('/api2/employee')
 
 
 # @app.route('/api2/employee/<int:id>', methods=['GET'])
@@ -132,13 +155,13 @@ def employee_add_process():
 #     return jsonify(e.to_dict())
 
 
-@app.route('/api2/employee/<int:id>', methods=["GET"])
+@app.route('/api2/employee/<int:id>', methods=['GET'])
 def employee_detail(id):
     """Get detail on one employee."""
 
     e = Employee.query.get_or_404(id)
 
-    return render_template("employee.html", employee=e)
+    return render_template('employee.html', employee=e)
 
 
 @app.route('/api2/employee/<int:id>', methods=['PUT', 'PATCH'])
