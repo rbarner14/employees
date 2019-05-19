@@ -59,13 +59,27 @@ def index():
 
 # jQuery components are their own routes.
 @app.route('/adjective')
-def get_rando_adjective():
+def get_random_adjective():
     """Show random adjective."""
 
     # Simulate a slow server
     time.sleep(2)
 
     return random.choice(ADJECTIVES)
+
+
+@app.route('/compliment')
+def get_random_compliment():
+
+    time.sleep(2)
+
+    consent = request.args.get("compliment")
+
+    if consent == "Yes":
+        return random.choice(["You are smart.", "You are kind.", 
+                              "You will change the world for the better!"])
+    else:
+        return "Okay, maybe tomorrow."
 
 
 @app.route('/venue_search', methods=['GET'])

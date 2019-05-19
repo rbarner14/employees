@@ -39,7 +39,7 @@ def getGeocodeLocation(inputString):
     # The json result is parsed for the data we need: lat & lng.
     latitude = result['results'][0]['geometry']['location']['lat']
     longitude = result['results'][0]['geometry']['location']['lng']
-    # print(latitude,longitude) 
+    
     # Latitude and longitude are returned as a tuple.
     return (latitude,longitude) 
 
