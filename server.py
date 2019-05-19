@@ -159,9 +159,10 @@ def employee_add_process():
     # For dramatic pause to emphasize jQuery method happening in back end.
     time.sleep(2)
 
-    flash('Employee added.')
+    # flash('Employee added.')
 
-    return redirect('/api2/employee')
+    # return redirect('/api2/employee')
+    return "Employee added."
 
 
 # @app.route('/api2/employee/<int:id>', methods=['GET'])
