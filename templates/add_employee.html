@@ -1,18 +1,20 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <form action="/add_employee" method="POST">
+    <form id="employee-form" action="/add_employee" method="POST">
       <div class="form-row">
         <div class="col-7">
-          <input type="text" class="form-control" placeholder="Name" name="name">
+          <input type="text" class="form-control" placeholder="Name" name="name" id="name-field">
         </div>
         <div class="col">
-          <input type="text" class="form-control" placeholder="State" name="state">
+          <input type="text" class="form-control" placeholder="State" name="state" id="state-field">
         </div>
         <div class="col">
-          <input type="text" class="form-control" placeholder="Department Code" name="dept_code">
+          <input type="text" class="form-control" placeholder="Department Code" name="dept_code" id="dept-code-field">
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </div>
     </form>
+
+<!--     <script src="/static/employee.js"></script> -->
 {% endblock %}

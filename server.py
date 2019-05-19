@@ -156,6 +156,9 @@ def employee_add_process():
     db.session.add(e)
     db.session.commit()
 
+    # For dramatic pause to emphasize jQuery method happening in back end.
+    time.sleep(2)
+
     flash('Employee added.')
 
     return redirect('/api2/employee')
