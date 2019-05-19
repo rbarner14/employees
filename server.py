@@ -121,6 +121,24 @@ def employee_list():
     return render_template('employee_list.html',employees=all_employees)
 
 
+@app.route('/employees_in_db.json', methods=['GET'])
+def get_employees_in_db():
+    """List employees."""
+
+    all_employees = Employee.query.all()
+
+    all_employees_json = {}
+
+    for employee in all_employees:
+        all_employees_json[employee.name] = {
+            "state": employee.state,
+            "dept_code": employee.dept_code
+        }
+    print(all_employees_json)
+
+    return jsonify(all_employees_json)
+
+
 # @app.route('/api2/employee', methods=['POST'])
 # def employee_add():
 #     """Add an employee."""
